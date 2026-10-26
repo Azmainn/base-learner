@@ -1,3 +1,6 @@
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 import { BellIcon, UserIcon } from "@/components/ui/icons";
 import { Logo, NavLinks } from "@/components/ui/navigation";
 
@@ -5,6 +8,20 @@ const links = [
   { href: "/courses", label: "Courses" },
   { href: "/my-learning", label: "My Learning" },
 ];
+
+const avatarSize = "size-10 sm:size-[52px]";
+
+function AvatarPlaceholder() {
+  return (
+    <span
+      aria-label="Account"
+      role="img"
+      className={`flex ${avatarSize} items-center justify-center rounded-full border-2 border-white bg-neutral-200 text-neutral-500 shadow-md`}
+    >
+      <UserIcon filled size={24} />
+    </span>
+  );
+}
 
 export function SiteHeader({ active }: { active?: string }) {
   return (
@@ -27,14 +44,25 @@ export function SiteHeader({ active }: { active?: string }) {
         >
           <BellIcon size={22} />
         </button>
-        {/* Placeholder until Clerk's UserButton is wired in the auth task. */}
-        <span
-          aria-label="Account"
-          role="img"
-          className="flex size-10 items-center justify-center rounded-full border-2 border-white bg-neutral-200 text-neutral-500 shadow-md sm:size-[52px]"
-        >
-          <UserIcon filled size={24} />
-        </span>
+        {/* Auth state reads the request, so it streams in behind the placeholder (cacheComponents). */}
+        <Suspense fallback={<AvatarPlaceholder />}>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <Button variant="secondary" size="md">
+                Sign in
+              </Button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: `${avatarSize} border-2 border-white shadow-md`,
+                },
+              }}
+            />
+          </Show>
+        </Suspense>
       </div>
     </header>
   );
