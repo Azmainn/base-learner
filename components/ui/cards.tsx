@@ -34,6 +34,7 @@ export function CourseCard({
   level,
   duration,
   modules,
+  size = "md",
   className,
 }: {
   href: string;
@@ -43,8 +44,32 @@ export function CourseCard({
   level: string;
   duration: string;
   modules: number;
+  size?: "md" | "lg";
   className?: string;
 }) {
+  if (size === "lg") {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "flex flex-col rounded-lg border border-neutral-200 bg-white px-6 pt-8 pb-6 shadow-sm transition-shadow hover:shadow-lg",
+          className,
+        )}
+      >
+        <div className="size-[72px] overflow-hidden rounded-sm">{icon}</div>
+        <h3 className="mt-6 font-display text-[22px] leading-[30px] font-normal text-neutral-900">
+          {title}
+        </h3>
+        <p className="mt-4 text-body leading-6 text-neutral-700">{summary}</p>
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-neutral-100 pt-5 [&>span]:gap-1.5 [&>span]:text-[10px] [&>span]:whitespace-nowrap">
+          <Meta icon={<ChartIcon size={13} />}>{level}</Meta>
+          <Meta icon={<ClockIcon size={13} />}>{duration}</Meta>
+          <Meta icon={<FileIcon size={13} />}>{modules} modules</Meta>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={href}
